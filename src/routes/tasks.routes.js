@@ -9,13 +9,13 @@ const router = Router()
 
 router.get('/tasks', authRequired, getTasks)
 
-router.get('/task/:id', authRequired, getTask)
+router.get('/tasks/:id', authRequired, getTask)
 
 router.post('/task', authRequired, validateSchema(createTaskSchema), createTask)
 
-router.delete('/task/:id', authRequired, deleteTask)
+router.delete('/tasks/:id', authRequired, deleteTask)
 
-router.put('/task/:id', authRequired, updateTask)
+router.put('/tasks/:id', authRequired, updateTask)
 
 
 export default router
