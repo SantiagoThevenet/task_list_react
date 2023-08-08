@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errors, setErrors] = useState([]);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const signup = async (user) => {
     try {
       const res = await registerRequest(user);
@@ -48,6 +48,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout = () => {
+    Cookies.remove("token")
+    setIsAuthenticated(false)
+    setUser(null)
+  };
+
   useEffect(() => {
     if (errors.length > 0) {
       const timer = setTimeout(() => {
@@ -62,30 +68,29 @@ export const AuthProvider = ({ children }) => {
       const cookies = Cookies.get();
 
       if (!cookies.token) {
-        setIsAuthenticated(false)
-        setLoading(false)
-        return setUser(null)
-
+        setIsAuthenticated(false);
+        setLoading(false);
+        return setUser(null);
       }
-        try {
-          const res = await verifyTokenRequest(cookies.token);
-          if (!res.data) {
-            setIsAuthenticated(false);
-            setLoading(false)
-            return
-          } 
-          
-          setIsAuthenticated(true);
-          setUser(res.data);
-          setLoading(false)
-        } catch (error) {
+      try {
+        const res = await verifyTokenRequest(cookies.token);
+        if (!res.data) {
           setIsAuthenticated(false);
-          setUser(null);
-          setLoading(false)
+          setLoading(false);
+          return;
+        }
+
+        setIsAuthenticated(true);
+        setUser(res.data);
+        setLoading(false);
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUser(null);
+        setLoading(false);
       }
     }
-    checkLogin()
-  }, [])
+    checkLogin();
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -93,9 +98,10 @@ export const AuthProvider = ({ children }) => {
         signup,
         signin,
         user,
+        logout,
         isAuthenticated,
         errors,
-        loading
+        loading,
       }}
     >
       {children}
